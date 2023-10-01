@@ -1,6 +1,5 @@
 import express from 'express';
 
-import { validateResource } from '../middlewares/validateResource';
 import {
   createUserSchema,
   verifyUserSchema,
@@ -14,6 +13,8 @@ import {
   resetPasswordHandler,
   getCurrentUserHandler,
 } from '../controllers/user.controller';
+import { validateResource } from '../middlewares/validateResource';
+import { requireUser } from '../middlewares/requireUser';
 
 export const userRouter = express.Router();
 
@@ -41,4 +42,4 @@ userRouter.post(
   resetPasswordHandler
 );
 
-userRouter.get('/api/users/whoami', getCurrentUserHandler);
+userRouter.get('/api/users/whoami', requireUser, getCurrentUserHandler);
