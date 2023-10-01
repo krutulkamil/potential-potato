@@ -1,8 +1,10 @@
 import type { DocumentType } from '@typegoose/typegoose';
 import type mongoose from 'mongoose';
+import { omit } from 'lodash';
 
-import { signJwt } from '../utils/jwt';
 import { SessionModel } from '../models/session.model';
+import { privateFields } from '../models/user.model';
+import { signJwt } from '../utils/jwt';
 import type { User } from '../models/user.model';
 
 interface IUserId {
@@ -20,7 +22,7 @@ export const signRefreshToken = async ({ userId }: IUserId) => {
 };
 
 export const signAccessToken = (user: DocumentType<User>) => {
-  const payload = user.toJSON();
+  const payload = omit(user.toJSON(), privateFields);
 
   return signJwt(payload, 'accessTokenPrivateKey');
 };

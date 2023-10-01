@@ -178,3 +178,21 @@ export const resetPasswordHandler = async (
       .send({ error: 'User Controller: An unexpected error occurred' });
   }
 };
+
+export const getCurrentUserHandler = async (_: Request, res: Response) => {
+  try {
+    const user = res.locals.user;
+    if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+    res.send(user);
+  } catch (error) {
+    if (error instanceof Error) {
+      log.error(`User Controller Error: ${error.message}`);
+      return res.status(400).send({ error: error.message });
+    }
+
+    return res
+      .status(500)
+      .send({ error: 'User Controller: An unexpected error occurred' });
+  }
+};

@@ -12,6 +12,7 @@ import {
   verifyUserHandler,
   forgotPasswordHandler,
   resetPasswordHandler,
+  getCurrentUserHandler,
 } from '../controllers/user.controller';
 
 export const userRouter = express.Router();
@@ -39,3 +40,5 @@ userRouter.post(
   validateResource(resetPasswordSchema),
   resetPasswordHandler
 );
+
+userRouter.get('/api/users/whoami', getCurrentUserHandler);
