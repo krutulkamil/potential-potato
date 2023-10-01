@@ -13,6 +13,6 @@ export const findUserById = (id: string) => {
   return UserModel.findById(id);
 };
 
-export const findByEmail = (email: string) => {
+export const findUserByEmail = (email: string) => {
   return UserModel.findOne({ email });
 };

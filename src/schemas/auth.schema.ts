@@ -15,4 +15,4 @@ export const createSessionSchema = z.object({
   }),
 });
 
-export type TCreateSessionSchema = z.TypeOf<typeof createSessionSchema>;
+export type TCreateSessionSchema = z.TypeOf<typeof createSessionSchema>['body'];

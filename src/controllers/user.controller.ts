@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 
 import {
   createUser,
-  findByEmail,
+  findUserByEmail,
   findUserById,
 } from '../services/user.service';
 import { sendEmail } from '../utils/mailer';
@@ -99,7 +99,7 @@ export const forgotPasswordHandler = async (
 
   try {
     // FIND USER BY EMAIL
-    const user = await findByEmail(email);
+    const user = await findUserByEmail(email);
     if (!user) {
       log.error('ForgotPassword: User not found by email');
       return res.send({ message });
