@@ -42,4 +42,12 @@ export const createUserSchema = z.object({
     }),
 });
 
+export const verifyUserSchema = z.object({
+  params: z.object({
+    id: z.string(),
+    verificationCode: z.string(),
+  }),
+});
+
 export type TCreateUserSchema = z.TypeOf<typeof createUserSchema>;
+export type TVerifyUserSchema = z.TypeOf<typeof verifyUserSchema>['params'];

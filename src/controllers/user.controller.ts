@@ -1,9 +1,12 @@
 import type { Request, Response } from 'express';
 
-import { createUser } from '../services/user.service';
-import type { TCreateUserSchema } from '../schemas/user.schema';
-import { log } from '../utils/logger';
+import { createUser, findUserById } from '../services/user.service';
 import { sendEmail } from '../utils/mailer';
+import { log } from '../utils/logger';
+import type {
+  TCreateUserSchema,
+  TVerifyUserSchema,
+} from '../schemas/user.schema';
 
 export const createUserHandler = async (
   req: Request<object, object, TCreateUserSchema>,
@@ -35,4 +38,32 @@ export const createUserHandler = async (
       .status(500)
       .send({ error: 'User Controller: An unexpected error occurred' });
   }
+};
+
+export const verifyUserHandler = async (
+  req: Request<TVerifyUserSchema>,
+  res: Response
+) => {
+  const id = req.params.id;
+  const verificationCode = req.params.verificationCode;
+
+  // FIND USER BY ID
+  const user = await findUserById(id);
+  if (!user) return res.status(404).send({ error: 'User not found' });
+
+  // CHECK IF ALREADY VERIFIED
+  if (user.verified) {
+    return res.status(400).send({ error: 'User already verified' });
+  }
+
+  // CHECK IF VERIFICATION CODE MATCHES
+  if (user.verificationCode === verificationCode) {
+    user.verified = true;
+
+    await user.save();
+
+    return res.status(200).send({ message: 'User verified successfully' });
+  }
+
+  return res.status(400).send({ error: 'Invalid verification code' });
 };
