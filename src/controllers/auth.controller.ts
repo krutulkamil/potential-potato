@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import type { TCreateSessionSchema } from '../schemas/auth.schema';
 import { findUserByEmail } from '../services/user.service';
 import { log } from '../utils/logger';
+import { signAccessToken, signRefreshToken } from '../services/auth.service';
 
 export const createSessionHandler = async (
   req: Request<object, object, TCreateSessionSchema>,
@@ -28,12 +29,14 @@ export const createSessionHandler = async (
       return res.status(401).send({ error: message });
     }
 
-    // TODO:
     // SIGN ACCESS TOKEN
-    // TODO:
+    const accessToken = signAccessToken(user);
+
     // SIGN REFRESH TOKEN
-    // TODO:
+    const refreshToken = await signRefreshToken({ userId: user._id });
+
     // SEND TOKENS
+    return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {
     if (error instanceof Error) {
       log.error(`User Controller Error: ${error.message}`);

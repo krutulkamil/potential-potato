@@ -1,7 +1,13 @@
-import express, { type Request, type Response } from 'express';
+import express from 'express';
+
+import { validateResource } from '../middlewares/validateResource';
+import { createSessionSchema } from '../schemas/auth.schema';
+import { createSessionHandler } from '../controllers/auth.controller';
 
 export const authRouter = express.Router();
 
-authRouter.get('/api/auth', (_: Request, res: Response) => {
-  return res.sendStatus(200);
-});
+authRouter.post(
+  '/api/sessions',
+  validateResource(createSessionSchema),
+  createSessionHandler
+);
