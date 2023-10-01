@@ -60,3 +60,13 @@ export class User {
 }
 
 export const UserModel = getModelForClass(User);
+
+type TUserFields = keyof User | '__v';
+
+export const privateFields: TUserFields[] = [
+  'password',
+  'verificationCode',
+  'passwordResetCode',
+  'verified',
+  '__v',
+];
