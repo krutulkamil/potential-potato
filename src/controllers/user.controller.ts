@@ -23,6 +23,7 @@ export const createUserHandler = async (
       to: user.email,
       subject: 'Please verify your account!',
       text: `Verification code ${user.verificationCode}. Id: ${user._id}`,
+      html: `<p>Verification code <span style="color: red; font-weight: bold">${user.verificationCode}</span>. Id: <span style="color: red; font-weight: bold;">${user._id}</span></p>`,
     });
 
     return res.status(200).send(user);
