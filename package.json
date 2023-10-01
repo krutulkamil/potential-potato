@@ -5,6 +5,12 @@
   "repository": "https://github.com/krutulkamil/potential-potato.git",
   "author": "krutulkamil <krutulkamil@onet.pl>",
   "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "build": "tsc",
+    "lint": "eslint ./ --ext .js,.ts",
+    "lint:fix": "eslint ./ --fix --ext .js,.ts"
+  },
   "dependencies": {
     "@typegoose/typegoose": "^11.5.0",
     "argon2": "^0.31.1",
@@ -22,14 +28,14 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.3",
     "@types/config": "^3.3.1",
     "@types/express": "^4.17.18",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/lodash": "^4.14.199",
-    "@types/nodemailer": "^6.4.11",
     "@types/node": "^20.7.0",
+    "@types/nodemailer": "^6.4.11",
     "@types/pino": "^7.0.5",
-    "@types/body-parser": "^1.19.3",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "eslint": "^8.0.1",
@@ -38,6 +44,7 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-prettier": "^5.0.0",
     "pino-pretty": "^10.2.0",
+    "prettier": "^3.0.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   }
