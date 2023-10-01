@@ -43,11 +43,29 @@ export const createUserSchema = z.object({
 });
 
 export const verifyUserSchema = z.object({
-  params: z.object({
-    id: z.string(),
-    verificationCode: z.string(),
+  params: z
+    .object({
+      id: z.string(),
+      verificationCode: z.string(),
+    })
+    .refine((data) => data.id.length === 24, {
+      message: 'Invalid mongoDB id. Must be 24 characters long',
+      path: ['id'],
+    }),
+});
+
+export const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .email('Not a valid email'),
   }),
 });
 
 export type TCreateUserSchema = z.TypeOf<typeof createUserSchema>;
 export type TVerifyUserSchema = z.TypeOf<typeof verifyUserSchema>['params'];
+export type TForgotPasswordSchema = z.TypeOf<
+  typeof forgotPasswordSchema
+>['body'];

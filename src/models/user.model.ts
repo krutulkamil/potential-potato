@@ -1,6 +1,7 @@
 import type { DocumentType } from '@typegoose/typegoose';
 import {
   getModelForClass,
+  index,
   modelOptions,
   pre,
   prop,
@@ -19,6 +20,7 @@ import { log } from '../utils/logger';
   this.password = await argon2.hash(this.password);
   return;
 })
+@index({ email: 1 })
 @modelOptions({
   schemaOptions: {
     timestamps: true,

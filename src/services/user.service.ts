@@ -12,3 +12,7 @@ export const createUser = async (input: TCreateUserSchema) => {
 export const findUserById = (id: string) => {
   return UserModel.findById(id);
 };
+
+export const findByEmail = (email: string) => {
+  return UserModel.findOne({ email });
+};
