@@ -2,7 +2,10 @@ import express from 'express';
 
 import { validateResource } from '../middlewares/validateResource';
 import { createSessionSchema } from '../schemas/auth.schema';
-import { createSessionHandler } from '../controllers/auth.controller';
+import {
+  createSessionHandler,
+  refreshAccessTokenHandler,
+} from '../controllers/auth.controller';
 
 export const authRouter = express.Router();
 
@@ -11,3 +14,5 @@ authRouter.post(
   validateResource(createSessionSchema),
   createSessionHandler
 );
+
+authRouter.post('/api/sessions/refresh', refreshAccessTokenHandler);

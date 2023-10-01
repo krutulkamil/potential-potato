@@ -1,9 +1,15 @@
 import type { Request, Response } from 'express';
+import { get } from 'lodash';
 
 import type { TCreateSessionSchema } from '../schemas/auth.schema';
-import { findUserByEmail } from '../services/user.service';
+import { findUserByEmail, findUserById } from '../services/user.service';
 import { log } from '../utils/logger';
-import { signAccessToken, signRefreshToken } from '../services/auth.service';
+import {
+  findSessionById,
+  signAccessToken,
+  signRefreshToken,
+} from '../services/auth.service';
+import { verifyJwt } from '../utils/jwt';
 
 export const createSessionHandler = async (
   req: Request<object, object, TCreateSessionSchema>,
@@ -47,4 +53,38 @@ export const createSessionHandler = async (
       .status(500)
       .send({ error: 'User Controller: An unexpected error occurred' });
   }
+};
+
+export const refreshAccessTokenHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const errorMessage = 'Could not refresh access token';
+  const refreshToken = String(get(req, 'headers.x-refresh', ''));
+
+  const decoded = verifyJwt<{ session: string }>(
+    refreshToken,
+    'refreshTokenPublicKey'
+  );
+  if (!decoded) {
+    return res.status(401).send({ error: errorMessage });
+  }
+
+  const sessionId = decoded.session;
+  if (!sessionId) {
+    return res.status(401).send({ error: errorMessage });
+  }
+
+  const session = await findSessionById(sessionId);
+  if (!session || !session.valid) {
+    return res.status(401).send({ error: errorMessage });
+  }
+
+  const user = await findUserById(String(session.user));
+  if (!user) {
+    return res.status(401).send({ error: errorMessage });
+  }
+
+  const accessToken = signAccessToken(user);
+  return res.send({ accessToken });
 };

@@ -31,3 +31,7 @@ export const signAccessToken = (user: DocumentType<User>) => {
     expiresIn: config.get<string>('accessTokenTtl'),
   });
 };
+
+export const findSessionById = (sessionId: string) => {
+  return SessionModel.findById(sessionId);
+};
