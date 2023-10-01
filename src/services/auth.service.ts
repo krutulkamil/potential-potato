@@ -1,6 +1,7 @@
 import type { DocumentType } from '@typegoose/typegoose';
 import type mongoose from 'mongoose';
 import { omit } from 'lodash';
+import config from 'config';
 
 import { SessionModel } from '../models/session.model';
 import { privateFields } from '../models/user.model';
@@ -18,11 +19,15 @@ export const createSession = async ({ userId }: IUserId) => {
 export const signRefreshToken = async ({ userId }: IUserId) => {
   const session = await createSession({ userId });
 
-  return signJwt({ session: session._id }, 'refreshTokenPrivateKey');
+  return signJwt({ session: session._id }, 'refreshTokenPrivateKey', {
+    expiresIn: config.get<string>('refreshTokenTtl'),
+  });
 };
 
 export const signAccessToken = (user: DocumentType<User>) => {
   const payload = omit(user.toJSON(), privateFields);
 
-  return signJwt(payload, 'accessTokenPrivateKey');
+  return signJwt(payload, 'accessTokenPrivateKey', {
+    expiresIn: config.get<string>('accessTokenTtl'),
+  });
 };
