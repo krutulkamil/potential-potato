@@ -46,7 +46,9 @@ export const verifyUserSchema = z.object({
   params: z
     .object({
       id: z.string(),
-      verificationCode: z.string(),
+      verificationCode: z.string().nonempty({
+        message: 'Verification code is required',
+      }),
     })
     .refine((data) => data.id.length === 24, {
       message: 'Invalid mongoDB id. Must be 24 characters long',
@@ -64,8 +66,38 @@ export const forgotPasswordSchema = z.object({
   }),
 });
 
+export const resetPasswordSchema = z.object({
+  params: z
+    .object({
+      id: z.string(),
+      passwordResetCode: z.string().nonempty({
+        message: 'Password reset code is required',
+      }),
+    })
+    .refine((data) => data.id.length === 24, {
+      message: 'Invalid mongoDB id. Must be 24 characters long',
+      path: ['id'],
+    }),
+  body: z
+    .object({
+      password: z
+        .string({
+          required_error: 'Password is required',
+        })
+        .min(6, 'Password is too short - should be min 6 chars'),
+      passwordConfirmation: z.string({
+        required_error: 'Password confirmation is required',
+      }),
+    })
+    .refine((data) => data.password === data.passwordConfirmation, {
+      message: 'Passwords do not match',
+      path: ['passwordConfirmation'],
+    }),
+});
+
 export type TCreateUserSchema = z.TypeOf<typeof createUserSchema>;
 export type TVerifyUserSchema = z.TypeOf<typeof verifyUserSchema>['params'];
 export type TForgotPasswordSchema = z.TypeOf<
   typeof forgotPasswordSchema
 >['body'];
+export type TResetPasswordSchema = z.TypeOf<typeof resetPasswordSchema>;

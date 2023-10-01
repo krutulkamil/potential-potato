@@ -5,11 +5,13 @@ import {
   createUserSchema,
   verifyUserSchema,
   forgotPasswordSchema,
+  resetPasswordSchema,
 } from '../schemas/user.schema';
 import {
   createUserHandler,
   verifyUserHandler,
   forgotPasswordHandler,
+  resetPasswordHandler,
 } from '../controllers/user.controller';
 
 export const userRouter = express.Router();
@@ -30,4 +32,10 @@ userRouter.post(
   '/api/users/forgot-password',
   validateResource(forgotPasswordSchema),
   forgotPasswordHandler
+);
+
+userRouter.post(
+  '/api/users/reset-password/:id/:passwordResetCode',
+  validateResource(resetPasswordSchema),
+  resetPasswordHandler
 );

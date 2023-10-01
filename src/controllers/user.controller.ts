@@ -11,6 +11,7 @@ import { log } from '../utils/logger';
 import type {
   TCreateUserSchema,
   TForgotPasswordSchema,
+  TResetPasswordSchema,
   TVerifyUserSchema,
 } from '../schemas/user.schema';
 
@@ -100,12 +101,12 @@ export const forgotPasswordHandler = async (
     // FIND USER BY EMAIL
     const user = await findByEmail(email);
     if (!user) {
-      log.debug('ForgotPassword: User not found by email');
+      log.error('ForgotPassword: User not found by email');
       return res.send({ message });
     }
 
     if (!user.verified) {
-      log.debug('ForgotPassword: User not verified');
+      log.error('ForgotPassword: User not verified');
       return res.status(400).send({ error: 'User is not verified' });
     }
 
@@ -123,9 +124,49 @@ export const forgotPasswordHandler = async (
       html: `<p>Password reset code: <span style="color: red; font-weight: bold">${passwordResetCode}</span>. Id: <span style="color: red; font-weight: bold;">${user._id}</span></p>`,
     });
 
-    log.debug(`ForgotPassword: Password reset code sent to ${email}`);
+    log.info(`ForgotPassword: Password reset code sent to ${email}`);
 
     return res.send({ message });
+  } catch (error) {
+    if (error instanceof Error) {
+      log.error(`User Controller Error: ${error.message}`);
+      return res.status(400).send({ error: error.message });
+    }
+
+    return res
+      .status(500)
+      .send({ error: 'User Controller: An unexpected error occurred' });
+  }
+};
+
+export const resetPasswordHandler = async (
+  req: Request<
+    TResetPasswordSchema['params'],
+    object,
+    TResetPasswordSchema['body']
+  >,
+  res: Response
+) => {
+  const { id, passwordResetCode } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await findUserById(id);
+
+    const isNotValid =
+      !user ||
+      !user.passwordResetCode ||
+      user.passwordResetCode !== passwordResetCode;
+
+    if (isNotValid) {
+      return res.status(400).send({ error: 'Could not reset user password' });
+    }
+
+    user.passwordResetCode = null;
+    user.password = password;
+
+    await user.save();
+    return res.send({ message: 'Password reset successfully' });
   } catch (error) {
     if (error instanceof Error) {
       log.error(`User Controller Error: ${error.message}`);
