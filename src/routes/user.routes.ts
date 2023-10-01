@@ -1,7 +1,13 @@
-import express, { type Request, type Response } from 'express';
+import express from 'express';
+
+import { validateResource } from '../middlewares/validateResource';
+import { createUserSchema } from '../schemas/user.schema';
+import { createUserHandler } from '../controllers/user.controller';
 
 export const userRouter = express.Router();
 
-userRouter.post('/api/users', (_: Request, res: Response) => {
-  return res.sendStatus(200);
-});
+userRouter.post(
+  '/api/users',
+  validateResource(createUserSchema),
+  createUserHandler
+);

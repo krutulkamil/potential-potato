@@ -13,7 +13,7 @@ export const validateResource =
         params: req.params,
       });
       next();
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof ZodError) {
         const issues = error.issues.map((issue) => issue.message);
         log.error(`Zod Validation: ${issues.join(', ')}`);
